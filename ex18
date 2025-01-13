@@ -1,0 +1,132 @@
+program GestionNotesEtudiants;
+
+const
+  MaxEtudiants = 100;
+
+type
+  Etudiant = record
+    Nom: string[30];
+    Prenom: string[30];
+    Numero: string[10];
+    ControleContinu: real;
+    ExamenFinal: real;
+    TravauxPratiques: real;
+    Moyenne: real;
+    Decision: string[10];
+    Mention: string[20];
+  end;
+
+  TableauEtudiants = array[1..MaxEtudiants] of Etudiant;
+
+var
+  Etudiants: TableauEtudiants;
+  NbEtudiants: integer;
+  choix: integer;
+
+procedure SaisieEtudiants(var Etudiants: TableauEtudiants; var NbEtudiants: integer);
+var
+  i: integer;
+begin
+  writeln('Entrez le nombre d''étudiants : ');
+  readln(NbEtudiants);
+  for i := 1 to NbEtudiants do
+  begin
+    writeln('Étudiant ', i, ':');
+    write('Nom : '); readln(Etudiants[i].Nom);
+    write('Prénom : '); readln(Etudiants[i].Prenom);
+    write('Numéro d''inscription : '); readln(Etudiants[i].Numero);
+    write('Note Contrôle Continu (/20) : '); readln(Etudiants[i].ControleContinu);
+    write('Note Examen Final (/20) : '); readln(Etudiants[i].ExamenFinal);
+    write('Note Travaux Pratiques (/20) : '); readln(Etudiants[i].TravauxPratiques);
+    Etudiants[i].Moyenne := 0; // Initialisation
+    Etudiants[i].Decision := '';
+    Etudiants[i].Mention := '';
+  end;
+end;
+
+procedure CalculMoyenne(var Etudiants: TableauEtudiants; NbEtudiants: integer);
+var
+  i: integer;
+begin
+  for i := 1 to NbEtudiants do
+  begin
+    Etudiants[i].Moyenne := (Etudiants[i].ControleContinu * 0.25) +
+                            (Etudiants[i].ExamenFinal * 0.40) +
+                            (Etudiants[i].TravauxPratiques * 0.35);
+    if Etudiants[i].Moyenne >= 10 then
+    begin
+      Etudiants[i].Decision := 'Admis';
+      case Trunc(Etudiants[i].Moyenne) of
+        10..11: Etudiants[i].Mention := 'Passable';
+        12..13: Etudiants[i].Mention := 'Assez Bien';
+        14..15: Etudiants[i].Mention := 'Bien';
+        16..17: Etudiants[i].Mention := 'Très Bien';
+        18..20: Etudiants[i].Mention := 'Excellent';
+      end;
+    end
+    else
+    begin
+      Etudiants[i].Decision := 'Ajourné';
+      Etudiants[i].Mention := '---';
+    end;
+  end;
+end;
+
+procedure TrierEtudiants(var Etudiants: TableauEtudiants; NbEtudiants: integer);
+var
+  i, j: integer;
+  Temp: Etudiant;
+begin
+  for i := 1 to NbEtudiants - 1 do
+    for j := i + 1 to NbEtudiants do
+    begin
+      if Etudiants[i].Moyenne > Etudiants[j].Moyenne then
+      begin
+        Temp := Etudiants[i];
+        Etudiants[i] := Etudiants[j];
+        Etudiants[j] := Temp;
+      end;
+    end;
+end;
+
+procedure AfficherResultats(Etudiants: TableauEtudiants; NbEtudiants: integer);
+var
+  i: integer;
+begin
+  writeln('-----------------------------------------------------------');
+  writeln('Nom       | Prénom    | Moyenne  | Décision  | Mention');
+  writeln('-----------------------------------------------------------');
+  for i := 1 to NbEtudiants do
+  begin
+    with Etudiants[i] do
+    begin
+      writeln(Nom:10, ' | ', Prenom:10, ' | ', Moyenne:8:2, ' | ', Decision:9, ' | ', Mention:10);
+    end;
+  end;
+end;
+
+procedure Menu();
+begin
+  repeat
+    writeln('MENU PRINCIPAL');
+    writeln('1. Saisie des étudiants');
+    writeln('2. Calcul des moyennes');
+    writeln('3. Trier les étudiants');
+    writeln('4. Afficher les résultats');
+    writeln('5. Quitter');
+    writeln('Entrez votre choix : ');
+    readln(choix);
+
+    case choix of
+      1: SaisieEtudiants(Etudiants, NbEtudiants);
+      2: CalculMoyenne(Etudiants, NbEtudiants);
+      3: TrierEtudiants(Etudiants, NbEtudiants);
+      4: AfficherResultats(Etudiants, NbEtudiants);
+    end;
+  until choix = 5;
+end;
+
+begin
+  NbEtudiants := 0;
+  Menu();
+end.
