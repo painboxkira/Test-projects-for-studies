@@ -1,0 +1,130 @@
+program CompetitionAthletisme;
+
+const
+  MaxAthletes = 100;
+
+type
+  Athlete = record
+    Matricule: string[10];
+    Nom: string[30];
+    Age: integer;
+    Taille: real;
+    RecordPerso: real;
+  end;
+
+  AthleteArray = array[1..MaxAthletes] of Athlete;
+
+var
+  Athletes, FilteredAthletes: AthleteArray;
+  NAthletes, FilteredCount: integer;
+  RMA: real;
+  choix: integer;
+
+procedure SaisieAthletes(var Athletes: AthleteArray; var NAthletes: integer);
+var
+  i: integer;
+begin
+  writeln('Entrez le nombre d''athlètes : ');
+  readln(NAthletes);
+  for i := 1 to NAthletes do
+  begin
+    writeln('Athlète ', i, ':');
+    write('Matricule : '); readln(Athletes[i].Matricule);
+    write('Nom : '); readln(Athletes[i].Nom);
+    write('Âge : '); readln(Athletes[i].Age);
+    write('Taille (en cm) : '); readln(Athletes[i].Taille);
+    write('Record personnel : '); readln(Athletes[i].RecordPerso);
+  end;
+end;
+
+function CalculRMA(Athletes: AthleteArray; NAthletes: integer): real;
+var
+  i: integer;
+  Total: real;
+begin
+  Total := 0;
+  for i := 1 to NAthletes do
+    Total := Total + Athletes[i].RecordPerso;
+  CalculRMA := Total / NAthletes;
+end;
+
+procedure FiltrerAthletes(Athletes: AthleteArray; NAthletes: integer; RMA: real;
+                          var FilteredAthletes: AthleteArray; var FilteredCount: integer);
+var
+  i: integer;
+begin
+  FilteredCount := 0;
+  for i := 1 to NAthletes do
+  begin
+    if Athletes[i].RecordPerso < RMA then
+    begin
+      Inc(FilteredCount);
+      FilteredAthletes[FilteredCount] := Athletes[i];
+    end;
+  end;
+end;
+
+procedure TrierAthletes(var Athletes: AthleteArray; N: integer);
+var
+  i, j: integer;
+  Temp: Athlete;
+begin
+  for i := 1 to N - 1 do
+    for j := i + 1 to N do
+    begin
+      if Athletes[i].RecordPerso > Athletes[j].RecordPerso then
+      begin
+        Temp := Athletes[i];
+        Athletes[i] := Athletes[j];
+        Athletes[j] := Temp;
+      end;
+    end;
+end;
+
+procedure AfficherAthletes(Athletes: AthleteArray; N: integer);
+var
+  i: integer;
+begin
+  writeln('---------------------------------------------------------');
+  writeln('Matricule | Nom       | Âge | Taille | Record Personnel');
+  writeln('---------------------------------------------------------');
+  for i := 1 to N do
+  begin
+    with Athletes[i] do
+    begin
+      writeln(Matricule:10, ' | ', Nom:10, ' | ', Age:3, ' | ', Taille:6:2, ' | ', RecordPerso:6:2);
+    end;
+  end;
+end;
+
+procedure Menu();
+begin
+  repeat
+    writeln('MENU PRINCIPAL');
+    writeln('1. Saisie des athlètes');
+    writeln('2. Calcul du record moyen');
+    writeln('3. Filtrer les athlètes (Record < Moyenne)');
+    writeln('4. Trier les athlètes (par record croissant)');
+    writeln('5. Afficher les athlètes filtrés');
+    writeln('6. Quitter');
+    writeln('Entrez votre choix : ');
+    readln(choix);
+
+    case choix of
+      1: SaisieAthletes(Athletes, NAthletes);
+      2: begin
+           RMA := CalculRMA(Athletes, NAthletes);
+           writeln('Record moyen des athlètes : ', RMA:6:2);
+         end;
+      3: FiltrerAthletes(Athletes, NAthletes, RMA, FilteredAthletes, FilteredCount);
+      4: TrierAthletes(FilteredAthletes, FilteredCount);
+      5: AfficherAthletes(FilteredAthletes, FilteredCount);
+    end;
+  until choix = 6;
+end;
+
+begin
+  NAthletes := 0;
+  FilteredCount := 0;
+  Menu();
+end.
