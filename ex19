@@ -1,0 +1,91 @@
+program PaieDesEmployes;
+
+const
+  MaxEmployes = 100;
+
+type
+  Employe = record
+    Nom: string[30];
+    Prenom: string[30];
+    SalaireBrut: real;
+    Primes: real;
+    Taxes: real;
+    Retenues: real;
+    SalaireNet: real;
+  end;
+
+  TableauEmployes = array[1..MaxEmployes] of Employe;
+
+var
+  Employes: TableauEmployes;
+  NbEmployes: integer;
+  choix: integer;
+
+procedure SaisieEmployes(var Employes: TableauEmployes; var NbEmployes: integer);
+var
+  i: integer;
+begin
+  writeln('Entrez le nombre d''employés : ');
+  readln(NbEmployes);
+  for i := 1 to NbEmployes do
+  begin
+    writeln('Employé ', i, ':');
+    write('Nom : '); readln(Employes[i].Nom);
+    write('Prénom : '); readln(Employes[i].Prenom);
+    write('Salaire Brut : '); readln(Employes[i].SalaireBrut);
+    write('Primes : '); readln(Employes[i].Primes);
+    write('Taxes : '); readln(Employes[i].Taxes);
+    write('Retenues : '); readln(Employes[i].Retenues);
+    Employes[i].SalaireNet := 0; // Инициализация
+  end;
+end;
+
+procedure CalculerSalairesNet(var Employes: TableauEmployes; NbEmployes: integer);
+var
+  i: integer;
+begin
+  for i := 1 to NbEmployes do
+  begin
+    Employes[i].SalaireNet := Employes[i].SalaireBrut + Employes[i].Primes - Employes[i].Taxes - Employes[i].Retenues;
+  end;
+end;
+
+procedure AfficherResultats(Employes: TableauEmployes; NbEmployes: integer);
+var
+  i: integer;
+begin
+  writeln('-------------------------------------------------------------');
+  writeln('Nom       | Prénom    | Brut    | Primes | Taxes | Retenues | Net');
+  writeln('-------------------------------------------------------------');
+  for i := 1 to NbEmployes do
+  begin
+    with Employes[i] do
+    begin
+      writeln(Nom:10, ' | ', Prenom:10, ' | ', SalaireBrut:8:2, ' | ', Primes:8:2, ' | ', Taxes:8:2, ' | ', Retenues:8:2, ' | ', SalaireNet:8:2);
+    end;
+  end;
+end;
+
+procedure Menu();
+begin
+  repeat
+    writeln('MENU PRINCIPAL');
+    writeln('1. Saisie des employés');
+    writeln('2. Calcul des salaires nets');
+    writeln('3. Affichage des résultats');
+    writeln('4. Quitter');
+    writeln('Entrez votre choix : ');
+    readln(choix);
+
+    case choix of
+      1: SaisieEmployes(Employes, NbEmployes);
+      2: CalculerSalairesNet(Employes, NbEmployes);
+      3: AfficherResultats(Employes, NbEmployes);
+    end;
+  until choix = 4;
+end;
+
+begin
+  NbEmployes := 0;
+  Menu();
+end.
