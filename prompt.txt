@@ -1,0 +1,12 @@
+Program starts with: Algorithm Nameoftheprogram;
+Then goes variable and const declaration: 
+Const Nameofvariable = value; for constant variables
+Var Nameofvariable:Typeofvariable(entier(integer),reel(float),bolean(bool),texte(string),charactere(char)); for variables.
+note that we can declare many constants by separating them with a ";" and many variables separating them with a ","
+Then we move to the instructions:
+We start we a: Debut
+then we have the following instructions for now:
+lire(variablename); it's the equivalent of readln in pascal
+ecrire("msg" or variable name or as many paramaters); the equivalent of writeln in pascal
+Assignements are made like in the pascal language following the same syntax and same rules, for example Variable := 8; or Variable := a + b; and so on.
+We end our algorithm with: Fin 
